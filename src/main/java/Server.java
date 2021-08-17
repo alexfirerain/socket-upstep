@@ -35,6 +35,13 @@ public class Server {
                 System.out.println("send: " + (x + 1));
             }
 
+            String msg;
+            while ((msg = in.readLine()) != null) {
+                System.out.println("Server add: " + msg);
+                out.write(msg + " received");
+                out.flush();
+            }
+
         }
 
     }

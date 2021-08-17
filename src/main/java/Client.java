@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
     public static void main(String[] args) {
@@ -9,7 +10,17 @@ public class Client {
                 BufferedWriter outwards = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))
         )
         {
-            outwards.write("Хуй");
+            Scanner userInput = new Scanner(System.in);
+//            outwards.write("Хуй");
+            String msg;
+            while (!(msg = userInput.nextLine()).isEmpty()) {
+                outwards.write(msg);
+                outwards.newLine();
+                outwards.flush();
+
+                System.out.println("Server echo " + inwards.readLine());
+            }
+
 
 
         } catch (IOException e) {
