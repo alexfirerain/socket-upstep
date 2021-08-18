@@ -6,19 +6,22 @@ public class Client {
     public static void main(String[] args) {
         try (
                 Socket clientSocket = new Socket("localhost", Server.S_PORT);
-                BufferedReader inwards = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                BufferedWriter outwards = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))
+                BufferedReader socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                BufferedWriter socketWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+                Scanner userInput = new Scanner(System.in)
         )
         {
-            Scanner userInput = new Scanner(System.in);
-//            outwards.write("Хуй");
+//            listenToServer(socketReader);
+            String str;
+            while ((str = socketReader.readLine()) != null)
+                System.out.println(str);
             String msg;
             while (!(msg = userInput.nextLine()).isEmpty()) {
-                outwards.write(msg);
-                outwards.newLine();
-                outwards.flush();
+                socketWriter.write(msg);
+                socketWriter.newLine();
+                socketWriter.flush();
 
-                System.out.println("Server echo " + inwards.readLine());
+                System.out.println("Сервер говорит: " + socketReader.readLine());
             }
 
 
@@ -26,5 +29,11 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    static void listenToServer(BufferedReader source) throws IOException {
+        String str;
+        while ((str = source.readLine()) != null)
+            System.out.println(str);
+        System.out.println();
     }
 }
