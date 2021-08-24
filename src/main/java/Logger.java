@@ -8,8 +8,17 @@ public class Logger {
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     File logFile;
 
-    public Logger(String logPath) {
+    public Logger(String logPath, boolean createNew) {
         logFile = new File(logPath);
+        if (createNew && logFile.exists()) try {
+            if (logFile.delete())
+                System.out.println("Старый лог удалён");
+            if (logFile.createNewFile()) {
+                System.out.println("Новый создан");
+            }
+        } catch (IOException e) {
+            System.out.println("Невозможно создать новый лог. " + e.getMessage());
+        }
     }
 
     public void log(String string) {
