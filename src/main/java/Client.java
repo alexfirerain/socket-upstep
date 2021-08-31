@@ -1,26 +1,41 @@
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 import java.util.Scanner;
 
 public class Client {
     private static final String host = "netology.homework";
+
+    final static InetSocketAddress socketAddress = new InetSocketAddress(host, Server.S_PORT);
+// подключаемся к серверу
+
     public static void main(String[] args) {
         try (
-                Socket clientSocket = new Socket(host, Server.S_PORT);
-                BufferedReader socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                BufferedWriter socketWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+
+                final SocketChannel socketChannel = SocketChannel.open();
+//                Socket clientSocket = new Socket(host, Server.S_PORT);
+//                BufferedReader socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//                BufferedWriter socketWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
                 Scanner userInput = new Scanner(System.in)
         )
         {
-            listenToServer(socketReader);
+            socketChannel.connect(socketAddress);
+
+//            listenToServer(socketReader);
             System.out.println("So what");
-//            String str;
-//            while ((str = socketReader.readLine()) != null)
-//                System.out.println(str);
+            String str;
+
+            final ByteBuffer inputBuffer = ByteBuffer.allocate(2 << 10);
+
+            while ((str = socketChannel.read(inputBuffer)) != -1)
+                System.out.println(str);
+
             String msg = userInput.nextLine();
-                socketWriter.write(msg);
-                socketWriter.newLine();
-                socketWriter.flush();
+                socketChannel.write(msg);
+                socketChannel.newLine();
+                socketChannel.flush();
 
             System.out.println("Сервер говорит: " + socketReader.readLine());
 
