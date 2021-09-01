@@ -17,10 +17,13 @@ public class Server {
         serverSocket = new ServerSocket(S_PORT);
         serverStatement("Привет, Сервер запустился и слушает.");
         String clientName;
+        int clientAge;
+        String clientPayment;
+        Custumer client;
 
         try (
                 Socket socket = serverSocket.accept();
-                PrintWriter outSocket = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+                PrintWriter outSocket = new PrintWriter(socket.getOutputStream(), true);
                 BufferedReader inSocket = new BufferedReader(new InputStreamReader(socket.getInputStream()))
         ) {
             serverStatement("Новое соединение по запросу от: " +
@@ -28,39 +31,62 @@ public class Server {
                     "\n установлено через разъём №" +
                     socket.getPort());
 
-            outSocket.write(RYUSHECHKI);
-            outSocket.write("Здравствуйте, мы Сервер с Рюшечками. Представьтесь:");
-            outSocket.println("");
-            outSocket.flush();
+//            outSocket.println(RYUSHECHKI);
+            outSocket.println("Здравствуйте, мы Сервер с Рюшечками. Представьтесь:\r\n");
+
             clientName = inSocket.readLine();
             serverStatement("Клиент представился как " + clientName);
 
             outSocket.println(String.format("Привет, %s, мы соединились через разъём №%d",
                     clientName, socket.getPort()));
-            outSocket.println(clientName + ", введите ваш возраст: ");
 
-//            String clientsInput;
-//            while ((clientsInput = in.readLine()) != null) {
-//                System.out.println("receive: " + clientsInput);
-//                int x = Integer.parseInt(clientsInput);
-//                out.println(x + 1);
-//                System.out.println("send: " + (x + 1));
-//            }
+            client = new Custumer(clientName);
+            outSocket.println(clientName + ", добро пожаловать в наше заведение!\n" +
+                    "Для выхода введите '-'.\n" +
+                    "Введите ваш возраст: \r\n");
+            String ageStr = inSocket.readLine();
 
-            String msg;
-            while ((msg = inSocket.readLine()) != null) {
-                System.out.println("Сервер принял: " + msg);
-                outSocket.write(msg + " отправил");
-                outSocket.flush();
+            boolean canceled = ageStr.equals("-");
+
+            clientAge = Integer.parseInt(ageStr);
+            client.setAge(clientAge);
+            serverStatement(clientName + " " + clientAge + " лет." +
+                    " Категория " + client.getCategory().toString());
+
+            switch (client.getCategory()) {
+                case KID -> {
+                    outSocket.println("Вы зачислены в комнату для детей");
+                    client.setPayment("хорошее настроение");
+                }
+                case ADULT -> {
+                    outSocket.println("Вы зачислены в комнату для взрослых");
+                    outSocket.println("Какой платёж вы готовы делать ежемесячно?\r\n");
+                    String paymentStr = inSocket.readLine();
+                    client.setPayment(paymentStr);
+                    if (paymentStr.equals("-")) canceled = true;
+                }
+                case SENIOR -> {
+                    outSocket.println("Вы зачислены в комнату для старших");
+                    client.setPayment("мудрые советы");
+                }
             }
 
-            serverStatement("Сервер закрывается.");
+            if (!canceled) {
+                outSocket.println("Поздравляем!\n" +
+                        "Вот ваша карточка:\n" + client);
+                serverStatement("Карта заведена");
+            } else {
+                outSocket.println("Отмана");
+                serverStatement("Карта не заведена");
+            }
+            outSocket.println("До свидания!");
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             serverSocket.close();
         }
-
+        serverStatement("Сервер закрывается.");
     }
 
     static void serverStatement(String message) {
