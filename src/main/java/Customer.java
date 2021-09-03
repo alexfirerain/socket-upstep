@@ -1,21 +1,9 @@
 import java.util.Objects;
 
-public class Custumer {
-    private String clientName;
+public class Customer {
+    private final String clientName;
     private int age;
     private String payment;
-
-    public String getClientName() {
-        return clientName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public String getPayment() {
-        return payment;
-    }
 
     public Rang getCategory() {
         return category;
@@ -32,11 +20,11 @@ public class Custumer {
         this.payment = payment;
     }
 
-    public Custumer(String clientName) {
+    public Customer(String clientName) {
         this.clientName = clientName;
     }
 
-    public Custumer(String clientName, int age, String payment) {
+    public Customer(String clientName, int age, String payment) {
         this.clientName = clientName;
         this.age = age;
         this.payment = payment;
@@ -70,10 +58,10 @@ public class Custumer {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Custumer custumer = (Custumer) o;
-        return age == custumer.age &&
-                clientName.equals(custumer.clientName) &&
-                payment.equals(custumer.payment);
+        Customer customer = (Customer) o;
+        return age == customer.age &&
+                clientName.equals( customer.clientName) &&
+                payment.equals( customer.payment);
     }
 
     @Override

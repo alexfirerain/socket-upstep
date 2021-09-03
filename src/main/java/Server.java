@@ -19,7 +19,7 @@ public class Server {
         String clientName;
         int clientAge;
         String clientPayment;
-        Custumer client;
+        Customer client;
 
         try (
                 Socket socket = serverSocket.accept();
@@ -40,7 +40,7 @@ public class Server {
             outSocket.println(String.format("Привет, %s, мы соединились через разъём №%d",
                     clientName, socket.getPort()));
 
-            client = new Custumer(clientName);
+            client = new Customer(clientName);
             outSocket.println(clientName + ", добро пожаловать в наше заведение!\n" +
                     "Для выхода введите '-'.\n" +
                     "Введите ваш возраст: \r\n");
@@ -61,9 +61,9 @@ public class Server {
                 case ADULT -> {
                     outSocket.println("Вы зачислены в комнату для взрослых");
                     outSocket.println("Какой платёж вы готовы делать ежемесячно?\r\n");
-                    String paymentStr = inSocket.readLine();
-                    client.setPayment(paymentStr);
-                    if (paymentStr.equals("-")) canceled = true;
+                    clientPayment = inSocket.readLine();
+                    client.setPayment(clientPayment);
+                    if (clientPayment.equals("-")) canceled = true;
                 }
                 case SENIOR -> {
                     outSocket.println("Вы зачислены в комнату для старших");

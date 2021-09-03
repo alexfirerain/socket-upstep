@@ -3,7 +3,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
-    // %WinDir%/System32/drivers/etc/hosts содержит строку "127.0.0.1   netology.homework"
+    // %WINDIR%/System32/drivers/etc/hosts содержит строку "127.0.0.1   netology.homework"
     private static final String host = "netology.homework";
 
     public static void main(String[] args) {
@@ -11,32 +11,23 @@ public class Client {
                 Socket clientSocket = new Socket(host, Server.S_PORT);
                 BufferedReader fromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 BufferedWriter toServer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-                Scanner userInput = new Scanner(System.in)
+                Scanner console = new Scanner(System.in)
         ) {
 
 
             listenToServer(fromServer);
-//            String str;
-//            do {
-//                str = fromServer.readLine();
-//                System.out.println(str);
-//            } while (!str.isEmpty() && !str.endsWith("\r\n"));
 
-//            while ((str = fromServer.readLine()) != null)
-//                System.out.println(str);
-            String userData;
-            while (clientSocket.isConnected()) {
+            String usersInput;
+            while (clientSocket.isConnected()) { //  && !usersInput.equals("-") ?
 
-                userData = userInput.nextLine();
+                usersInput = console.nextLine();
 
-                toServer.write(userData);
+                toServer.write(usersInput);
                 toServer.newLine();
                 toServer.flush();
 
                 listenToServer(fromServer);
             }
-
-
 
         } catch (IOException e) {
             e.printStackTrace();
